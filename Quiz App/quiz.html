@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .correct {
+        color: green;
+    }
+
+    .incorrect {
+        color: red;
+    }
+</style>
+
+<body>
+    <div id="quizlist"></div>
+
+    <script>
+        const renderData = (data) => {
+            document.getElementById("quizlist").innerHTML = "";
+
+            data.map((quiz) => {
+                let Question = document.createElement("h4");
+                Question.innerHTML = quiz.question;
+
+                let OptionsA = document.createElement("p");
+                OptionsA.innerHTML = `A: ${quiz.options[0]}`;
+                OptionsA.addEventListener('click', () => handleAnswerClick(OptionsA, quiz.options[0], quiz.correct));
+
+                let OptionsB = document.createElement("p");
+                OptionsB.innerHTML = `B: ${quiz.options[1]}`;
+                OptionsB.addEventListener('click', () => handleAnswerClick(OptionsB, quiz.options[1], quiz.correct));
+
+                let OptionsC = document.createElement("p");
+                OptionsC.innerHTML = `C: ${quiz.options[2]}`;
+                OptionsC.addEventListener('click', () => handleAnswerClick(OptionsC, quiz.options[2], quiz.correct));
+
+                let OptionsD = document.createElement("p");
+                OptionsD.innerHTML = `D: ${quiz.options[3]}`;
+                OptionsD.addEventListener('click', () => handleAnswerClick(OptionsD, quiz.options[3], quiz.correct));
+
+                let div = document.createElement("div");
+                div.append(Question, OptionsA, OptionsB, OptionsC, OptionsD);
+                document.getElementById("quizlist").append(div);
+            });
+        }
+
+        const handleAnswerClick = (clickedElement, selectedOption, correctAnswer) => {
+            const optionsElements = clickedElement.parentElement.querySelectorAll("p");
+
+            optionsElements.forEach((element) => {
+                if (element === clickedElement) {
+                    if (selectedOption === correctAnswer) {
+                        element.classList.add("correct");
+                    } else {
+                        element.classList.add("incorrect");
+                    }
+                } else {
+                    if (element.innerHTML.includes(correctAnswer)) {
+                        element.classList.add("correct");
+                    } else {
+                        element.classList.add("incorrect");
+                    }
+                }
+            });
+        }
+
+        const getData = async () => {
+            fetch("http://localhost:8090/quizdata")
+                .then((res) => res.json())
+                .then((data) => {
+                    renderData(data);
+                });
+        }
+
+        getData();
+
+    </script>
+</body>
+
+</html>
